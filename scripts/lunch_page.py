@@ -5,7 +5,7 @@
 결과: workbench/day3/outputs/hanbit_lunch.html (같은 입력이면 같은 페이지)
 기준: labs/day3/lab-c/lab_c_guide.md 「5. 감 검증」 · 「6. 페이지 규칙」 · 「7. 예보관 시험」 · 「8. 다음 주 예보」
 
-지금 있는 구역: 머리 → 다음 주 예보 → 예보 성적표 → 영양사님 감 검증 → 만든 방법 (「10. 다듬기」)
+지금 있는 구역: 머리 → 다음 주 예보 → 예보 성적표 → AI가 배운 것(「9-①」) → 영양사님 감 검증 → 만든 방법
 """
 import html
 import json
@@ -246,6 +246,28 @@ for (_, r), p in zip(plan.iterrows(), plan_pred):
 hi = max(range(len(week)), key=lambda i: week[i]["forecast"])
 lo = min(range(len(week)), key=lambda i: week[i]["forecast"])
 
+# ---------- AI가 배운 것 — 한 가지만 바꿔 보기 (「9-① AI가 배운 것」) ----------
+BASE_DAY = {"요일": "화", "날씨": "맑음", "최고기온": 22.0, "메인메뉴": "비빔밥",
+            "행사": float("nan"), "월급날": 0, "출근예정": 470}  # 행사 빈칸 → '없음'(배울 때와 같은 처리)
+# (이름, 바꿀 것, 감 검증 꼬리표)
+CHANGES = [
+    ("비가 오면", {"날씨": "비"}, f"믿음 1 · {B[1]['badge']}"),
+    ("금요일이면", {"요일": "금"}, f"믿음 2 · {B[2]['badge']}"),
+    ("월요일이면", {"요일": "월"}, f"믿음 5 · {B[5]['badge']}"),
+    ("카레면", {"메인메뉴": "카레"}, "믿음에 없음 · 공식 ×1.1"),
+    ("돈가스면", {"메인메뉴": "돈가스"}, f"믿음 3 · {B[3]['badge']}"),
+    ("샐러드면", {"메인메뉴": "샐러드"}, "믿음에 없음 · 공식 ×0.9"),
+    ("월급날이면", {"월급날": 1}, "메모에 없음"),
+    ("외부 손님 방문이면", {"행사": "외부 손님 방문"}, "메모에 없음"),
+]
+ask = pd.DataFrame([BASE_DAY] + [{**BASE_DAY, **chg} for _, chg, _ in CHANGES])
+ask_pred = forecasters[ours].predict(features(ask, X_train.columns))
+base_pred = float(ask_pred[0])
+learned = sorted(
+    [{"name": n, "tag": t, "diff": round_half_up(float(p) - base_pred)}
+     for (n, _, t), p in zip(CHANGES, ask_pred[1:])],
+    key=lambda x: -x["diff"])  # 많이 늘리는 것부터 많이 줄이는 것 순
+
 
 # ---------- 페이지 조각 ----------
 def esc(s):
@@ -373,6 +395,36 @@ def section_score():
     </section>"""
 
 
+def section_learned():
+    top = max(abs(x["diff"]) for x in learned) or 1
+    rows = []
+    for x in learned:
+        ratio = abs(x["diff"]) / top  # 가장 긴 막대 = 1 — 가운데(0)에서 양쪽으로, 끝에 숫자 자리를 남긴다
+        side = "up" if x["diff"] > 0 else "down" if x["diff"] < 0 else "zero"
+        sign = f"+{x['diff']}" if x["diff"] > 0 else f"{x['diff']}"
+        rows.append(f"""
+        <li class="lb-row">
+          <div class="lb-head"><span class="lb-name">{esc(x['name'])}</span><span class="lb-tag">{esc(x['tag'])}</span></div>
+          <div class="lb-track" role="img" aria-label="{esc(x['name'])} {sign}명">
+            <span class="lb-bar lb-{side}" style="--r:{ratio:.3f}"></span>
+            <span class="lb-val lb-val-{side}" style="--r:{ratio:.3f}">{sign}명</span>
+          </div>
+        </li>""")
+    return f"""
+    <section id="learned">
+      <h2>AI가 배운 것 — 한 가지만 바꿔 보기</h2>
+      <p class="lead">우리 예보관({esc(ours)})에게 기준 하루를 물은 뒤, 한 가지만 바꿔 다시 물었습니다.
+        기준 하루: 화요일 · 맑음 · 22도 · 비빔밥 · 행사 없음 · 월급날 아님 · 출근 470명.</p>
+      <div class="card">
+        <p class="lb-base">기준 하루 예보 <b>{round_half_up(base_pred)}명</b></p>
+        <ul class="lb">{''.join(rows)}
+        </ul>
+        <p class="lb-note">꼬리표는 영양사님 감 검증에서 같은 이야기를 한 믿음과 그 판정입니다.</p>
+      </div>
+      <p class="tally">AI는 함께 움직인 것을 찾았을 뿐, 왜 그런지(원인)는 사람이 확인한다</p>
+    </section>"""
+
+
 def section_method():
     other = next(n for n in scores if n != ours)
     return f"""
@@ -454,6 +506,25 @@ h3{font-size:17px;margin:0 0 8px}
 .nw{white-space:nowrap}
 .method{margin:0;padding-left:20px;color:var(--muted)}
 .method li{margin-top:4px}
+#learned .card{margin-top:12px}
+#learned .tally{margin-top:12px}
+.lb-base{margin:0 0 8px;font-size:18px}
+.lb-base b{font-size:28px}
+.lb{list-style:none;margin:0;padding:0}
+.lb-row{padding:10px 0;border-top:1px solid var(--line)}
+.lb-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 8px;align-items:baseline}
+.lb-name{font-weight:700}
+.lb-tag{font-size:14px;color:var(--muted);background:var(--gray-soft);padding:0 8px;border-radius:6px}
+.lb-track{position:relative;height:26px;margin-top:6px;background:linear-gradient(var(--line),var(--line)) center/1px 100% no-repeat}
+.lb-track{--max:calc(50% - 60px)}
+.lb-bar{position:absolute;top:5px;height:16px;width:calc(var(--r) * var(--max))}
+.lb-up{left:50%;background:var(--accent);border-radius:0 4px 4px 0}
+.lb-down{right:50%;background:var(--warn);border-radius:4px 0 0 4px}
+.lb-val{position:absolute;top:2px;font-size:14px;font-weight:700;white-space:nowrap}
+.lb-val-up{left:calc(50% + var(--r) * var(--max) + 6px);color:var(--accent)}
+.lb-val-down{right:calc(50% + var(--r) * var(--max) + 6px);color:var(--warn)}
+.lb-val-zero{left:calc(50% + 6px);color:var(--muted)}
+.lb-note{margin:8px 0 0;font-size:14px;color:var(--muted)}
 """
 
 JS = """
@@ -584,9 +655,11 @@ data = {"period": period, "normal_days": len(normal),
                  "ai": [round(r["ai"], 1) for r in test_rows],
                  "formula": [round(r["formula"], 1) for r in test_rows],
                  "marks": MARKS},
-        "week": week}
+        "week": week,
+        "learned": {"base": round_half_up(base_pred), "changes": learned}}
 OUT.parent.mkdir(parents=True, exist_ok=True)
-OUT.write_text(page([section_week(), section_score(), section_beliefs(), section_method()], data), encoding="utf-8")
+OUT.write_text(page([section_week(), section_score(), section_learned(), section_beliefs(), section_method()], data),
+               encoding="utf-8")
 
 # ---------- 화면 요약 ----------
 print(f"기록 기간 {period} · 전체 {len(df)}일 · 보통 날 {len(normal)}일")
@@ -609,5 +682,8 @@ for (_, r), p, w in zip(plan.iterrows(), plan_pred, week):
     print(f"  {w['date']}({w['dow']}) 예보 {p:.2f} → {w['forecast']}명 · 준비 {w['prep']} · 공식 "
           f"{nutritionist_formula(r['날짜'], r['요일'], r['메인메뉴']):.2f} → {w['formula']} · {w['comment']}")
 print(f"가장 많은 날 {week[hi]['date']} {week[hi]['forecast']}명 · 가장 적은 날 {week[lo]['date']} {week[lo]['forecast']}명")
+print(f"AI가 배운 것: 기준 하루 {base_pred:.2f} → {round_half_up(base_pred)}명")
+for (n, _, t), p in zip(CHANGES, ask_pred[1:]):
+    print(f"  {n}: {float(p) - base_pred:+.2f} → {round_half_up(float(p) - base_pred):+d}명 · {t}")
 print("구역 순서:", re.findall(r'<section id="(\w+)"', OUT.read_text(encoding="utf-8")))
 print(f"페이지: {OUT.as_posix()}")

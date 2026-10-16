@@ -68,6 +68,25 @@ h3{font-size:17px;margin:0 0 8px}
 .nw{white-space:nowrap}
 .method{margin:0;padding-left:20px;color:var(--muted)}
 .method li{margin-top:4px}
+#learned .card{margin-top:12px}
+#learned .tally{margin-top:12px}
+.lb-base{margin:0 0 8px;font-size:18px}
+.lb-base b{font-size:28px}
+.lb{list-style:none;margin:0;padding:0}
+.lb-row{padding:10px 0;border-top:1px solid var(--line)}
+.lb-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 8px;align-items:baseline}
+.lb-name{font-weight:700}
+.lb-tag{font-size:14px;color:var(--muted);background:var(--gray-soft);padding:0 8px;border-radius:6px}
+.lb-track{position:relative;height:26px;margin-top:6px;background:linear-gradient(var(--line),var(--line)) center/1px 100% no-repeat}
+.lb-track{--max:calc(50% - 60px)}
+.lb-bar{position:absolute;top:5px;height:16px;width:calc(var(--r) * var(--max))}
+.lb-up{left:50%;background:var(--accent);border-radius:0 4px 4px 0}
+.lb-down{right:50%;background:var(--warn);border-radius:4px 0 0 4px}
+.lb-val{position:absolute;top:2px;font-size:14px;font-weight:700;white-space:nowrap}
+.lb-val-up{left:calc(50% + var(--r) * var(--max) + 6px);color:var(--accent)}
+.lb-val-down{right:calc(50% + var(--r) * var(--max) + 6px);color:var(--warn)}
+.lb-val-zero{left:calc(50% + 6px);color:var(--muted)}
+.lb-note{margin:8px 0 0;font-size:14px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -172,6 +191,74 @@ h3{font-size:17px;margin:0 0 8px}
       <p class="lead">준비 = AI는 우리 예보관의 예보 + 10인분, 영양사님은 공식 그대로. 남은 밥 = 준비 − 실제, 모자란 밥 = 실제 − 준비(0보다 작으면 0).
         1인분 원가 4,500원(가정).</p>
     </section>
+    <section id="learned">
+      <h2>AI가 배운 것 — 한 가지만 바꿔 보기</h2>
+      <p class="lead">우리 예보관(선형 회귀)에게 기준 하루를 물은 뒤, 한 가지만 바꿔 다시 물었습니다.
+        기준 하루: 화요일 · 맑음 · 22도 · 비빔밥 · 행사 없음 · 월급날 아님 · 출근 470명.</p>
+      <div class="card">
+        <p class="lb-base">기준 하루 예보 <b>309명</b></p>
+        <ul class="lb">
+        <li class="lb-row">
+          <div class="lb-head"><span class="lb-name">비가 오면</span><span class="lb-tag">믿음 1 · 맞음</span></div>
+          <div class="lb-track" role="img" aria-label="비가 오면 +33명">
+            <span class="lb-bar lb-up" style="--r:0.750"></span>
+            <span class="lb-val lb-val-up" style="--r:0.750">+33명</span>
+          </div>
+        </li>
+        <li class="lb-row">
+          <div class="lb-head"><span class="lb-name">카레면</span><span class="lb-tag">믿음에 없음 · 공식 ×1.1</span></div>
+          <div class="lb-track" role="img" aria-label="카레면 +28명">
+            <span class="lb-bar lb-up" style="--r:0.636"></span>
+            <span class="lb-val lb-val-up" style="--r:0.636">+28명</span>
+          </div>
+        </li>
+        <li class="lb-row">
+          <div class="lb-head"><span class="lb-name">돈가스면</span><span class="lb-tag">믿음 3 · 반만</span></div>
+          <div class="lb-track" role="img" aria-label="돈가스면 +24명">
+            <span class="lb-bar lb-up" style="--r:0.545"></span>
+            <span class="lb-val lb-val-up" style="--r:0.545">+24명</span>
+          </div>
+        </li>
+        <li class="lb-row">
+          <div class="lb-head"><span class="lb-name">외부 손님 방문이면</span><span class="lb-tag">메모에 없음</span></div>
+          <div class="lb-track" role="img" aria-label="외부 손님 방문이면 +20명">
+            <span class="lb-bar lb-up" style="--r:0.455"></span>
+            <span class="lb-val lb-val-up" style="--r:0.455">+20명</span>
+          </div>
+        </li>
+        <li class="lb-row">
+          <div class="lb-head"><span class="lb-name">월요일이면</span><span class="lb-tag">믿음 5 · 틀림</span></div>
+          <div class="lb-track" role="img" aria-label="월요일이면 +11명">
+            <span class="lb-bar lb-up" style="--r:0.250"></span>
+            <span class="lb-val lb-val-up" style="--r:0.250">+11명</span>
+          </div>
+        </li>
+        <li class="lb-row">
+          <div class="lb-head"><span class="lb-name">월급날이면</span><span class="lb-tag">메모에 없음</span></div>
+          <div class="lb-track" role="img" aria-label="월급날이면 -29명">
+            <span class="lb-bar lb-down" style="--r:0.659"></span>
+            <span class="lb-val lb-val-down" style="--r:0.659">-29명</span>
+          </div>
+        </li>
+        <li class="lb-row">
+          <div class="lb-head"><span class="lb-name">샐러드면</span><span class="lb-tag">믿음에 없음 · 공식 ×0.9</span></div>
+          <div class="lb-track" role="img" aria-label="샐러드면 -38명">
+            <span class="lb-bar lb-down" style="--r:0.864"></span>
+            <span class="lb-val lb-val-down" style="--r:0.864">-38명</span>
+          </div>
+        </li>
+        <li class="lb-row">
+          <div class="lb-head"><span class="lb-name">금요일이면</span><span class="lb-tag">믿음 2 · 맞음</span></div>
+          <div class="lb-track" role="img" aria-label="금요일이면 -44명">
+            <span class="lb-bar lb-down" style="--r:1.000"></span>
+            <span class="lb-val lb-val-down" style="--r:1.000">-44명</span>
+          </div>
+        </li>
+        </ul>
+        <p class="lb-note">꼬리표는 영양사님 감 검증에서 같은 이야기를 한 믿음과 그 판정입니다.</p>
+      </div>
+      <p class="tally">AI는 함께 움직인 것을 찾았을 뿐, 왜 그런지(원인)는 사람이 확인한다</p>
+    </section>
     <section id="beliefs">
       <h2>영양사님 감 검증</h2>
       <p class="lead">출근 인원이 다른 날도 견줄 수 있게 <b>출근 100명당 식수</b>(식수 ÷ 출근예정 × 100, 날마다 구해 평균)로 비교했습니다.
@@ -251,7 +338,7 @@ h3{font-size:17px;margin:0 0 8px}
       </ul>
     </section>
 </main>
-<script type="application/json" id="page-data">{"period": "2025-10-01 ~ 2026-10-15", "normal_days": 205, "cards": [{"no": 1, "badge": "맞음", "bars": [{"label": "비 오는 날", "value": 73.3569, "n": 50, "focus": true}, {"label": "맑은 날", "value": 65.2933, "n": 94, "focus": false}]}, {"no": 2, "badge": "맞음", "bars": [{"label": "금요일", "value": 59.982, "n": 38, "focus": true}, {"label": "월–목", "value": 69.6215, "n": 167, "focus": false}]}, {"no": 3, "badge": "반만", "bars": [{"label": "카레", "value": 72.3201, "n": 21, "focus": false}, {"label": "돈가스", "value": 72.117, "n": 19, "focus": true}, {"label": "치킨마요", "value": 71.1189, "n": 23, "focus": false}, {"label": "제육볶음", "value": 69.5685, "n": 18, "focus": false}, {"label": "김치찌개", "value": 68.6994, "n": 24, "focus": false}, {"label": "비빔밥", "value": 67.7436, "n": 21, "focus": false}, {"label": "짜장", "value": 67.3736, "n": 26, "focus": false}, {"label": "국수", "value": 66.0742, "n": 24, "focus": false}, {"label": "생선구이", "value": 63.318, "n": 15, "focus": false}, {"label": "샐러드", "value": 55.0374, "n": 14, "focus": false}]}, {"no": 4, "badge": "틀림", "bars": [{"label": "31도 이상", "value": 72.8239, "n": 20, "focus": true}, {"label": "25도 이상 31도 미만", "value": 70.0599, "n": 44, "focus": false}]}, {"no": 5, "badge": "틀림", "bars": [{"label": "월요일", "value": 71.7153, "n": 41, "focus": true}, {"label": "화–목", "value": 68.9402, "n": 126, "focus": false}]}, {"no": null, "badge": "차이 있음", "bars": [{"label": "월급날", "value": 56.3571, "n": 12, "focus": true}, {"label": "보통 날", "value": 67.8346, "n": 205, "focus": false}]}], "test": {"ours": "선형 회귀", "days": ["2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18", "2026-09-21", "2026-09-22", "2026-09-23", "2026-09-28", "2026-09-29", "2026-09-30", "2026-10-01", "2026-10-02", "2026-10-06", "2026-10-07", "2026-10-08", "2026-10-12", "2026-10-13", "2026-10-14", "2026-10-15"], "labels": ["09/14(월)", "09/15(화)", "09/16(수)", "09/17(목)", "09/18(금)", "09/21(월)", "09/22(화)", "09/23(수)", "09/28(월)", "09/29(화)", "09/30(수)", "10/01(목)", "10/02(금)", "10/06(화)", "10/07(수)", "10/08(목)", "10/12(월)", "10/13(화)", "10/14(수)", "10/15(목)"], "actual": [327, 318, 342, 366, 220, 354, 340, 226, 349, 319, 369, 307, 278, 284, 333, 314, 334, 289, 370, 330], "ai": [337.9, 332.4, 359.3, 358.3, 214.6, 356.8, 346.8, 224.5, 360.6, 317.0, 372.6, 308.8, 284.9, 278.7, 333.8, 325.3, 346.0, 302.8, 370.8, 341.9], "formula": [332.5, 331.0, 319.8, 329.8, 264.8, 371.8, 358.6, 358.6, 334.8, 323.0, 325.9, 337.0, 272.0, 327.0, 344.9, 336.2, 344.0, 315.2, 349.2, 331.8], "marks": {"2026-09-23": "추석 연휴 전날 · 돈가스", "2026-09-30": "비 오는 수요일 · 카레"}}, "week": [{"date": "2026-10-19", "md": "10/19", "dow": "월", "forecast": 332, "prep": 342, "formula": 341, "badges": ["맑음", "제육볶음"], "comment": "영양사님, 월요일은 화–목보다 100명당 2.8명 더 오셨어요(감 검증 '틀림'). AI 준비 342인분은 공식보다 1인분 많아요."}, {"date": "2026-10-20", "md": "10/20", "dow": "화", "forecast": 296, "prep": 306, "formula": 277, "badges": ["흐림", "샐러드", "외부 손님 방문"], "comment": "영양사님, 외부 손님 방문이 있어 출근예정이 472명이에요. AI 준비 306인분은 공식보다 29인분 많아요."}, {"date": "2026-10-21", "md": "10/21", "dow": "수", "forecast": 370, "prep": 380, "formula": 357, "badges": ["비", "카레"], "comment": "영양사님, 비 오는 날은 맑은 날보다 100명당 8.1명 더 오셨어요. AI 준비 380인분은 공식보다 23인분 많아요."}, {"date": "2026-10-22", "md": "10/22", "dow": "목", "forecast": 322, "prep": 332, "formula": 329, "badges": ["맑음", "생선구이", "전사 교육"], "comment": "영양사님, 전사 교육이 있어 출근예정이 515명이에요. AI 준비 332인분은 공식보다 3인분 많아요."}, {"date": "2026-10-23", "md": "10/23", "dow": "금", "forecast": 251, "prep": 261, "formula": 303, "badges": ["맑음", "돈가스", "월급날"], "comment": "영양사님, 월급날은 보통 날보다 100명당 11.5명 적게 오셨어요. AI 준비 261인분은 공식보다 42인분 적어요."}]}</script>
+<script type="application/json" id="page-data">{"period": "2025-10-01 ~ 2026-10-15", "normal_days": 205, "cards": [{"no": 1, "badge": "맞음", "bars": [{"label": "비 오는 날", "value": 73.3569, "n": 50, "focus": true}, {"label": "맑은 날", "value": 65.2933, "n": 94, "focus": false}]}, {"no": 2, "badge": "맞음", "bars": [{"label": "금요일", "value": 59.982, "n": 38, "focus": true}, {"label": "월–목", "value": 69.6215, "n": 167, "focus": false}]}, {"no": 3, "badge": "반만", "bars": [{"label": "카레", "value": 72.3201, "n": 21, "focus": false}, {"label": "돈가스", "value": 72.117, "n": 19, "focus": true}, {"label": "치킨마요", "value": 71.1189, "n": 23, "focus": false}, {"label": "제육볶음", "value": 69.5685, "n": 18, "focus": false}, {"label": "김치찌개", "value": 68.6994, "n": 24, "focus": false}, {"label": "비빔밥", "value": 67.7436, "n": 21, "focus": false}, {"label": "짜장", "value": 67.3736, "n": 26, "focus": false}, {"label": "국수", "value": 66.0742, "n": 24, "focus": false}, {"label": "생선구이", "value": 63.318, "n": 15, "focus": false}, {"label": "샐러드", "value": 55.0374, "n": 14, "focus": false}]}, {"no": 4, "badge": "틀림", "bars": [{"label": "31도 이상", "value": 72.8239, "n": 20, "focus": true}, {"label": "25도 이상 31도 미만", "value": 70.0599, "n": 44, "focus": false}]}, {"no": 5, "badge": "틀림", "bars": [{"label": "월요일", "value": 71.7153, "n": 41, "focus": true}, {"label": "화–목", "value": 68.9402, "n": 126, "focus": false}]}, {"no": null, "badge": "차이 있음", "bars": [{"label": "월급날", "value": 56.3571, "n": 12, "focus": true}, {"label": "보통 날", "value": 67.8346, "n": 205, "focus": false}]}], "test": {"ours": "선형 회귀", "days": ["2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18", "2026-09-21", "2026-09-22", "2026-09-23", "2026-09-28", "2026-09-29", "2026-09-30", "2026-10-01", "2026-10-02", "2026-10-06", "2026-10-07", "2026-10-08", "2026-10-12", "2026-10-13", "2026-10-14", "2026-10-15"], "labels": ["09/14(월)", "09/15(화)", "09/16(수)", "09/17(목)", "09/18(금)", "09/21(월)", "09/22(화)", "09/23(수)", "09/28(월)", "09/29(화)", "09/30(수)", "10/01(목)", "10/02(금)", "10/06(화)", "10/07(수)", "10/08(목)", "10/12(월)", "10/13(화)", "10/14(수)", "10/15(목)"], "actual": [327, 318, 342, 366, 220, 354, 340, 226, 349, 319, 369, 307, 278, 284, 333, 314, 334, 289, 370, 330], "ai": [337.9, 332.4, 359.3, 358.3, 214.6, 356.8, 346.8, 224.5, 360.6, 317.0, 372.6, 308.8, 284.9, 278.7, 333.8, 325.3, 346.0, 302.8, 370.8, 341.9], "formula": [332.5, 331.0, 319.8, 329.8, 264.8, 371.8, 358.6, 358.6, 334.8, 323.0, 325.9, 337.0, 272.0, 327.0, 344.9, 336.2, 344.0, 315.2, 349.2, 331.8], "marks": {"2026-09-23": "추석 연휴 전날 · 돈가스", "2026-09-30": "비 오는 수요일 · 카레"}}, "week": [{"date": "2026-10-19", "md": "10/19", "dow": "월", "forecast": 332, "prep": 342, "formula": 341, "badges": ["맑음", "제육볶음"], "comment": "영양사님, 월요일은 화–목보다 100명당 2.8명 더 오셨어요(감 검증 '틀림'). AI 준비 342인분은 공식보다 1인분 많아요."}, {"date": "2026-10-20", "md": "10/20", "dow": "화", "forecast": 296, "prep": 306, "formula": 277, "badges": ["흐림", "샐러드", "외부 손님 방문"], "comment": "영양사님, 외부 손님 방문이 있어 출근예정이 472명이에요. AI 준비 306인분은 공식보다 29인분 많아요."}, {"date": "2026-10-21", "md": "10/21", "dow": "수", "forecast": 370, "prep": 380, "formula": 357, "badges": ["비", "카레"], "comment": "영양사님, 비 오는 날은 맑은 날보다 100명당 8.1명 더 오셨어요. AI 준비 380인분은 공식보다 23인분 많아요."}, {"date": "2026-10-22", "md": "10/22", "dow": "목", "forecast": 322, "prep": 332, "formula": 329, "badges": ["맑음", "생선구이", "전사 교육"], "comment": "영양사님, 전사 교육이 있어 출근예정이 515명이에요. AI 준비 332인분은 공식보다 3인분 많아요."}, {"date": "2026-10-23", "md": "10/23", "dow": "금", "forecast": 251, "prep": 261, "formula": 303, "badges": ["맑음", "돈가스", "월급날"], "comment": "영양사님, 월급날은 보통 날보다 100명당 11.5명 적게 오셨어요. AI 준비 261인분은 공식보다 42인분 적어요."}], "learned": {"base": 309, "changes": [{"name": "비가 오면", "tag": "믿음 1 · 맞음", "diff": 33}, {"name": "카레면", "tag": "믿음에 없음 · 공식 ×1.1", "diff": 28}, {"name": "돈가스면", "tag": "믿음 3 · 반만", "diff": 24}, {"name": "외부 손님 방문이면", "tag": "메모에 없음", "diff": 20}, {"name": "월요일이면", "tag": "믿음 5 · 틀림", "diff": 11}, {"name": "월급날이면", "tag": "메모에 없음", "diff": -29}, {"name": "샐러드면", "tag": "믿음에 없음 · 공식 ×0.9", "diff": -38}, {"name": "금요일이면", "tag": "믿음 2 · 맞음", "diff": -44}]}}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 const DATA = JSON.parse(document.getElementById('page-data').textContent);
