@@ -40,15 +40,138 @@ h2{font-size:22px;margin:0 0 8px}
 .chart{position:relative;margin-top:12px}
 .verdict{margin:8px 0 0}
 .foot{margin-top:32px;color:var(--muted);font-size:14px}
+h3{font-size:17px;margin:0 0 8px}
+.models{margin:12px 0 8px}
+.num-pick{background:var(--accent-soft)}
+#score .card{margin-top:16px}
+.vs-grid{margin-top:0}
+.marks{margin:12px 0 0;padding-left:20px}
+.marks li{margin-top:4px}
+.week{display:grid;grid-template-columns:1fr;gap:12px}
+@media (min-width:960px){.week{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.day{display:flex;flex-direction:column;gap:4px}
+.day-hi{border:2px solid var(--accent)}
+.day-lo{border:2px solid var(--warn)}
+.day-head{display:flex;justify-content:space-between;align-items:baseline}
+.day-date{font-size:20px;font-weight:700}
+.day-dow{color:var(--muted)}
+.flag{align-self:flex-start;font-size:14px;font-weight:700;padding:2px 10px;border-radius:999px}
+.flag-hi{background:var(--accent-soft);color:var(--accent)}
+.flag-lo{background:var(--warn-soft);color:var(--warn)}
+.day-big{margin:4px 0 0;font-size:40px;font-weight:700;line-height:1.1}
+.day-big small{font-size:18px;font-weight:400;margin-left:2px}
+.day-prep{margin:0;font-size:18px;font-weight:700}
+.day-formula{margin:0;font-size:14px;color:var(--muted)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tag{font-size:14px;padding:1px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
+.day-comment{margin:8px 0 0;font-size:15px}
+.nw{white-space:nowrap}
+.method{margin:0;padding-left:20px;color:var(--muted)}
+.method li{margin-top:4px}
 </style>
 </head>
 <body>
 <main class="wrap">
   <header class="head">
     <h1>한빛식당 밥 예보</h1>
-    <p>(가상) 한빛정밀(주) 본사 구내식당 · 기록 기간 2025-10-01 ~ 2026-10-15 · 만든 사람 총무팀 최 대리(가상)</p>
+    <p>(가상) 한빛정밀(주) 본사 구내식당 · 기록 기간 <span class="nw">2025-10-01</span> ~ <span class="nw">2026-10-15</span> · 만든 사람 총무팀 <span class="nw">최 대리(가상)</span></p>
   </header>
 
+    <section id="week">
+      <h2>다음 주 예보 (10/19 ~ 10/23)</h2>
+      <p class="lead">시험에서 이긴 우리 예보관(선형 회귀)에게 다음 주 계획을 물었습니다. 예보는 반올림, 준비 = 예보 + 10인분.
+        영양사님 공식은 그날 전 같은 요일 4번의 평균 × 메뉴 배수입니다. 준비량은 영양사님이 정합니다.</p>
+      <div class="week">
+        <article class="card day">
+          <div class="day-head"><span class="day-date">10/19</span><span class="day-dow">월요일</span></div>
+          
+          <p class="day-big">332<small>명</small></p>
+          <p class="day-prep">준비 342인분</p>
+          <p class="day-formula">영양사님 공식이면 341인분</p>
+          <div class="tags"><span class="tag">맑음</span><span class="tag">제육볶음</span></div>
+          <p class="day-comment">영양사님, 월요일은 화–목보다 100명당 2.8명 더 오셨어요(감 검증 &#x27;틀림&#x27;). AI 준비 342인분은 공식보다 1인분 많아요.</p>
+        </article>
+        <article class="card day">
+          <div class="day-head"><span class="day-date">10/20</span><span class="day-dow">화요일</span></div>
+          
+          <p class="day-big">296<small>명</small></p>
+          <p class="day-prep">준비 306인분</p>
+          <p class="day-formula">영양사님 공식이면 277인분</p>
+          <div class="tags"><span class="tag">흐림</span><span class="tag">샐러드</span><span class="tag">외부 손님 방문</span></div>
+          <p class="day-comment">영양사님, 외부 손님 방문이 있어 출근예정이 472명이에요. AI 준비 306인분은 공식보다 29인분 많아요.</p>
+        </article>
+        <article class="card day day-hi">
+          <div class="day-head"><span class="day-date">10/21</span><span class="day-dow">수요일</span></div>
+          <span class="flag flag-hi">이번 주 가장 많은 날</span>
+          <p class="day-big">370<small>명</small></p>
+          <p class="day-prep">준비 380인분</p>
+          <p class="day-formula">영양사님 공식이면 357인분</p>
+          <div class="tags"><span class="tag">비</span><span class="tag">카레</span></div>
+          <p class="day-comment">영양사님, 비 오는 날은 맑은 날보다 100명당 8.1명 더 오셨어요. AI 준비 380인분은 공식보다 23인분 많아요.</p>
+        </article>
+        <article class="card day">
+          <div class="day-head"><span class="day-date">10/22</span><span class="day-dow">목요일</span></div>
+          
+          <p class="day-big">322<small>명</small></p>
+          <p class="day-prep">준비 332인분</p>
+          <p class="day-formula">영양사님 공식이면 329인분</p>
+          <div class="tags"><span class="tag">맑음</span><span class="tag">생선구이</span><span class="tag">전사 교육</span></div>
+          <p class="day-comment">영양사님, 전사 교육이 있어 출근예정이 515명이에요. AI 준비 332인분은 공식보다 3인분 많아요.</p>
+        </article>
+        <article class="card day day-lo">
+          <div class="day-head"><span class="day-date">10/23</span><span class="day-dow">금요일</span></div>
+          <span class="flag flag-lo">이번 주 가장 적은 날</span>
+          <p class="day-big">251<small>명</small></p>
+          <p class="day-prep">준비 261인분</p>
+          <p class="day-formula">영양사님 공식이면 303인분</p>
+          <div class="tags"><span class="tag">맑음</span><span class="tag">돈가스</span><span class="tag">월급날</span></div>
+          <p class="day-comment">영양사님, 월급날은 보통 날보다 100명당 11.5명 적게 오셨어요. AI 준비 261인분은 공식보다 42인분 적어요.</p>
+        </article>
+      </div>
+    </section>
+    <section id="score">
+      <h2>예보 성적표</h2>
+      <p class="lead">2026-09-14 전까지의 기록 226일로 배우고, 그 뒤 20일(2026-09-14 ~ 2026-10-15)로 시험했습니다.
+        시험 기간은 배울 때 쓰지 않았습니다. 예보관 설정은 모두 같은 결과를 보려고 고정했습니다.</p>
+      <div class="nums models"><div class="num num-pick"><span class="num-label">선형 회귀 · <b>우리 예보관</b></span><span class="num-val">7.4<small>인분</small></span><span class="num-n">시험 20일 하루 평균 차이</span></div><div class="num"><span class="num-label">LightGBM</span><span class="num-val">9.1<small>인분</small></span><span class="num-n">시험 20일 하루 평균 차이</span></div></div>
+      <p class="tally">복잡한 쪽이 늘 이기지는 않는다 — 시험으로 고른다</p>
+      <article class="card">
+        <h3>시험 20일 — 실제 · 우리 예보관(선형 회귀) · 영양사님 공식</h3>
+        <div class="chart" style="height:300px"><canvas id="chart-test" aria-label="시험 기간 선 그래프"></canvas></div>
+        <ul class="marks"><li><b>09/23(수) 추석 연휴 전날 · 돈가스</b> — 실제 226명 · 우리 예보관 224명 · 영양사님 공식 359인분</li><li><b>09/30(수) 비 오는 수요일 · 카레</b> — 실제 369명 · 우리 예보관 373명 · 영양사님 공식 326인분</li></ul>
+      </article>
+      <div class="grid vs-grid">
+        <article class="card vs">
+          <h3>하루 평균 몇 인분 차이</h3>
+          <div class="nums">
+            <div class="num num-pick"><span class="num-label">AI(우리 예보관)</span>
+              <span class="num-val">7.4<small>인분</small></span><span class="num-n">예보와 실제의 차이</span></div>
+            <div class="num"><span class="num-label">영양사님 공식</span>
+              <span class="num-val">26.2<small>인분</small></span><span class="num-n">공식과 실제의 차이</span></div>
+          </div>
+        </article>
+        <article class="card vs">
+          <h3>남은 밥(20일 합)</h3>
+          <div class="nums">
+            <div class="num num-pick"><span class="num-label">AI 준비(예보 + 10)</span>
+              <span class="num-val">305<small>인분</small></span><span class="num-n">1,372,500원</span></div>
+            <div class="num"><span class="num-label">영양사님 공식</span>
+              <span class="num-val">381<small>인분</small></span><span class="num-n">1,714,500원</span></div>
+          </div>
+        </article>
+        <article class="card vs">
+          <h3>모자란 밥(20일 합) = 컵라면을 드신 분</h3>
+          <div class="nums">
+            <div class="num num-pick"><span class="num-label">AI 준비(예보 + 10)</span>
+              <span class="num-val">0<small>인분</small></span><span class="num-n">모자란 날 0일</span></div>
+            <div class="num"><span class="num-label">영양사님 공식</span>
+              <span class="num-val">143<small>인분</small></span><span class="num-n">모자란 날 6일</span></div>
+          </div>
+        </article>
+      </div>
+      <p class="lead">준비 = AI는 우리 예보관의 예보 + 10인분, 영양사님은 공식 그대로. 남은 밥 = 준비 − 실제, 모자란 밥 = 실제 − 준비(0보다 작으면 0).
+        1인분 원가 4,500원(가정).</p>
+    </section>
     <section id="beliefs">
       <h2>영양사님 감 검증</h2>
       <p class="lead">출근 인원이 다른 날도 견줄 수 있게 <b>출근 100명당 식수</b>(식수 ÷ 출근예정 × 100, 날마다 구해 평균)로 비교했습니다.
@@ -117,9 +240,18 @@ h2{font-size:22px;margin:0 0 8px}
       </article>
       </div>
     </section>
-  <p class="foot">모든 숫자는 scripts/lunch_page.py가 정제한 기록(lunch_clean.csv)에서 계산했습니다. 회사 · 식당 · 인물은 모두 가상입니다.</p>
+    <section id="method">
+      <h2>만든 방법</h2>
+      <ul class="method">
+        <li>데이터: (가상) 한빛정밀(주) 본사 구내식당의 가상 점심 기록 · 기록 기간 <span class="nw">2025-10-01</span> ~ <span class="nw">2026-10-15</span> · 정제 뒤 246줄</li>
+        <li>예보관 두 명: 선형 회귀와 LightGBM — 시험 20일 성적이 더 좋은 <b>선형 회귀</b>를 골랐습니다(하루 평균 차이 선형 회귀 7.4인분 · LightGBM 9.1인분).</li>
+        <li>설정은 모두 같은 결과를 보려고 고정했습니다.</li>
+        <li>결정은 영양사님이 합니다. 이 페이지는 준비량을 정하는 데 참고하는 자료입니다.</li>
+        <li>모든 숫자는 scripts/lunch_page.py가 정제한 기록(lunch_clean.csv)에서 계산했습니다. 회사 · 식당 · 인물은 모두 가상입니다.</li>
+      </ul>
+    </section>
 </main>
-<script type="application/json" id="page-data">{"period": "2025-10-01 ~ 2026-10-15", "normal_days": 205, "cards": [{"no": 1, "badge": "맞음", "bars": [{"label": "비 오는 날", "value": 73.3569, "n": 50, "focus": true}, {"label": "맑은 날", "value": 65.2933, "n": 94, "focus": false}]}, {"no": 2, "badge": "맞음", "bars": [{"label": "금요일", "value": 59.982, "n": 38, "focus": true}, {"label": "월–목", "value": 69.6215, "n": 167, "focus": false}]}, {"no": 3, "badge": "반만", "bars": [{"label": "카레", "value": 72.3201, "n": 21, "focus": false}, {"label": "돈가스", "value": 72.117, "n": 19, "focus": true}, {"label": "치킨마요", "value": 71.1189, "n": 23, "focus": false}, {"label": "제육볶음", "value": 69.5685, "n": 18, "focus": false}, {"label": "김치찌개", "value": 68.6994, "n": 24, "focus": false}, {"label": "비빔밥", "value": 67.7436, "n": 21, "focus": false}, {"label": "짜장", "value": 67.3736, "n": 26, "focus": false}, {"label": "국수", "value": 66.0742, "n": 24, "focus": false}, {"label": "생선구이", "value": 63.318, "n": 15, "focus": false}, {"label": "샐러드", "value": 55.0374, "n": 14, "focus": false}]}, {"no": 4, "badge": "틀림", "bars": [{"label": "31도 이상", "value": 72.8239, "n": 20, "focus": true}, {"label": "25도 이상 31도 미만", "value": 70.0599, "n": 44, "focus": false}]}, {"no": 5, "badge": "틀림", "bars": [{"label": "월요일", "value": 71.7153, "n": 41, "focus": true}, {"label": "화–목", "value": 68.9402, "n": 126, "focus": false}]}, {"no": null, "badge": "차이 있음", "bars": [{"label": "월급날", "value": 56.3571, "n": 12, "focus": true}, {"label": "보통 날", "value": 67.8346, "n": 205, "focus": false}]}]}</script>
+<script type="application/json" id="page-data">{"period": "2025-10-01 ~ 2026-10-15", "normal_days": 205, "cards": [{"no": 1, "badge": "맞음", "bars": [{"label": "비 오는 날", "value": 73.3569, "n": 50, "focus": true}, {"label": "맑은 날", "value": 65.2933, "n": 94, "focus": false}]}, {"no": 2, "badge": "맞음", "bars": [{"label": "금요일", "value": 59.982, "n": 38, "focus": true}, {"label": "월–목", "value": 69.6215, "n": 167, "focus": false}]}, {"no": 3, "badge": "반만", "bars": [{"label": "카레", "value": 72.3201, "n": 21, "focus": false}, {"label": "돈가스", "value": 72.117, "n": 19, "focus": true}, {"label": "치킨마요", "value": 71.1189, "n": 23, "focus": false}, {"label": "제육볶음", "value": 69.5685, "n": 18, "focus": false}, {"label": "김치찌개", "value": 68.6994, "n": 24, "focus": false}, {"label": "비빔밥", "value": 67.7436, "n": 21, "focus": false}, {"label": "짜장", "value": 67.3736, "n": 26, "focus": false}, {"label": "국수", "value": 66.0742, "n": 24, "focus": false}, {"label": "생선구이", "value": 63.318, "n": 15, "focus": false}, {"label": "샐러드", "value": 55.0374, "n": 14, "focus": false}]}, {"no": 4, "badge": "틀림", "bars": [{"label": "31도 이상", "value": 72.8239, "n": 20, "focus": true}, {"label": "25도 이상 31도 미만", "value": 70.0599, "n": 44, "focus": false}]}, {"no": 5, "badge": "틀림", "bars": [{"label": "월요일", "value": 71.7153, "n": 41, "focus": true}, {"label": "화–목", "value": 68.9402, "n": 126, "focus": false}]}, {"no": null, "badge": "차이 있음", "bars": [{"label": "월급날", "value": 56.3571, "n": 12, "focus": true}, {"label": "보통 날", "value": 67.8346, "n": 205, "focus": false}]}], "test": {"ours": "선형 회귀", "days": ["2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18", "2026-09-21", "2026-09-22", "2026-09-23", "2026-09-28", "2026-09-29", "2026-09-30", "2026-10-01", "2026-10-02", "2026-10-06", "2026-10-07", "2026-10-08", "2026-10-12", "2026-10-13", "2026-10-14", "2026-10-15"], "labels": ["09/14(월)", "09/15(화)", "09/16(수)", "09/17(목)", "09/18(금)", "09/21(월)", "09/22(화)", "09/23(수)", "09/28(월)", "09/29(화)", "09/30(수)", "10/01(목)", "10/02(금)", "10/06(화)", "10/07(수)", "10/08(목)", "10/12(월)", "10/13(화)", "10/14(수)", "10/15(목)"], "actual": [327, 318, 342, 366, 220, 354, 340, 226, 349, 319, 369, 307, 278, 284, 333, 314, 334, 289, 370, 330], "ai": [337.9, 332.4, 359.3, 358.3, 214.6, 356.8, 346.8, 224.5, 360.6, 317.0, 372.6, 308.8, 284.9, 278.7, 333.8, 325.3, 346.0, 302.8, 370.8, 341.9], "formula": [332.5, 331.0, 319.8, 329.8, 264.8, 371.8, 358.6, 358.6, 334.8, 323.0, 325.9, 337.0, 272.0, 327.0, 344.9, 336.2, 344.0, 315.2, 349.2, 331.8], "marks": {"2026-09-23": "추석 연휴 전날 · 돈가스", "2026-09-30": "비 오는 수요일 · 카레"}}, "week": [{"date": "2026-10-19", "md": "10/19", "dow": "월", "forecast": 332, "prep": 342, "formula": 341, "badges": ["맑음", "제육볶음"], "comment": "영양사님, 월요일은 화–목보다 100명당 2.8명 더 오셨어요(감 검증 '틀림'). AI 준비 342인분은 공식보다 1인분 많아요."}, {"date": "2026-10-20", "md": "10/20", "dow": "화", "forecast": 296, "prep": 306, "formula": 277, "badges": ["흐림", "샐러드", "외부 손님 방문"], "comment": "영양사님, 외부 손님 방문이 있어 출근예정이 472명이에요. AI 준비 306인분은 공식보다 29인분 많아요."}, {"date": "2026-10-21", "md": "10/21", "dow": "수", "forecast": 370, "prep": 380, "formula": 357, "badges": ["비", "카레"], "comment": "영양사님, 비 오는 날은 맑은 날보다 100명당 8.1명 더 오셨어요. AI 준비 380인분은 공식보다 23인분 많아요."}, {"date": "2026-10-22", "md": "10/22", "dow": "목", "forecast": 322, "prep": 332, "formula": 329, "badges": ["맑음", "생선구이", "전사 교육"], "comment": "영양사님, 전사 교육이 있어 출근예정이 515명이에요. AI 준비 332인분은 공식보다 3인분 많아요."}, {"date": "2026-10-23", "md": "10/23", "dow": "금", "forecast": 251, "prep": 261, "formula": 303, "badges": ["맑음", "돈가스", "월급날"], "comment": "영양사님, 월급날은 보통 날보다 100명당 11.5명 적게 오셨어요. AI 준비 261인분은 공식보다 42인분 적어요."}]}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 const DATA = JSON.parse(document.getElementById('page-data').textContent);
@@ -154,6 +286,62 @@ DATA.cards.forEach((b, i) => {
     }
   });
 });
+
+// 예보 성적표 — 시험 기간 선 그래프, 9/23 · 9/30에 세로 점선 표시
+(() => {
+  const el = document.getElementById('chart-test');
+  if (!el) return;
+  const T = DATA.test;
+  const markIdx = T.days.map((d, i) => T.marks[d] ? i : -1).filter(i => i >= 0);
+  const markLines = {
+    id: 'markLines',
+    afterDatasetsDraw(chart) {
+      const { ctx, chartArea, scales } = chart;
+      ctx.save();
+      ctx.strokeStyle = C('--warn'); ctx.fillStyle = C('--warn');
+      ctx.setLineDash([4, 4]); ctx.lineWidth = 1.5;
+      ctx.font = "14px 'Noto Sans KR', sans-serif"; ctx.textAlign = 'center';
+      markIdx.forEach(i => {
+        const x = scales.x.getPixelForValue(i);
+        ctx.beginPath(); ctx.moveTo(x, chartArea.top); ctx.lineTo(x, chartArea.bottom); ctx.stroke();
+        const [m, d] = T.days[i].slice(5).split('-').map(Number);
+        ctx.fillText(m + '/' + d, x, chartArea.top - 10);  // 그래프 위 여백에 — 점과 겹치지 않게
+      });
+      ctx.restore();
+    }
+  };
+  new Chart(el, {
+    type: 'line',
+    data: {
+      labels: T.labels,
+      datasets: [
+        { label: '실제', data: T.actual, borderColor: C('--ink'), backgroundColor: C('--ink'),
+          borderWidth: 2, pointRadius: T.days.map((d, i) => markIdx.includes(i) ? 5 : 3) },
+        { label: '우리 예보관(' + T.ours + ')', data: T.ai, borderColor: C('--accent'), backgroundColor: C('--accent'),
+          borderWidth: 2, pointRadius: 3 },
+        { label: '영양사님 공식', data: T.formula, borderColor: C('--gray'), backgroundColor: C('--gray'),
+          borderWidth: 2, borderDash: [6, 4], pointRadius: 3 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: false,
+      layout: { padding: { top: 26 } },
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 14 } },
+        tooltip: { callbacks: {
+          title: items => { const i = items[0].dataIndex; return T.labels[i] + (T.marks[T.days[i]] ? ' · ' + T.marks[T.days[i]] : ''); },
+          label: c => c.dataset.label + ' ' + Math.round(c.parsed.y) + '명'
+        } }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true, callback: (v, i) => T.labels[i].slice(0, 5) } },
+        y: { grid: { color: C('--line') }, ticks: { callback: v => v + '명' } }
+      }
+    },
+    plugins: [markLines]
+  });
+})();
 </script>
 </body>
 </html>
