@@ -5,6 +5,7 @@
 - 레퍼런스: `workbench/day3/refs/ref1.png`(Behance) · `ref2.png`(Page Flows) — 출처는 `workbench/day3/refs/links.md`
 - 원칙: 레퍼런스의 **구조 · 간격 · 글자 위계만** 따라 하고, **색과 내용은 우리 것**으로 한다.
 - 이 파일의 토큰 밖 값은 쓰지 않는다. 필요하면 먼저 이 표에 토큰을 더한다.
+- v2: 색만 VS Code 기본 테마(Default Dark Modern)의 어두운 바탕 · 밝은 글자 분위기로 바꿨다(수강생 요청). 구역 · 숫자 · 크기 · 간격은 v1과 같다.
 
 ## 1. 레퍼런스에서 가져올 것 · 가져오지 않을 것
 
@@ -26,21 +27,21 @@
 
 | 이름 | 값 | 쓰는 곳 |
 |---|---|---|
-| `color-bg` | `#F6F7F9` | 페이지 바탕(연회색) |
-| `color-surface` | `#FFFFFF` | 카드 · 표 · 구역 면, 등급 라벨의 흰 글자 |
-| `color-border` | `#D5DAE0` | 카드 · 표의 1px 테두리, 가로 구분선, 막대의 등급 C가 아닌 몫 |
-| `color-text` | `#1F2328` | 본문 글자 · 제목 · KPI 숫자 |
-| `color-text-muted` | `#5A626C` | 보조 글자(설명 · 단위 · 표 머리 · 바닥글) |
-| `color-accent` | `#1D4ED8` | 강조 1색 — 슬라이더 손잡이와 값, 포커스 테두리, 링크 |
+| `color-bg` | `#181818` | 페이지 바탕(VS Code Dark Modern 사이드바 색) (v2에서 바뀜) |
+| `color-surface` | `#1F1F1F` | 카드 · 표 · 구역 면(VS Code 편집기 바탕 색), 등급 라벨의 글자 (v2에서 바뀜) |
+| `color-border` | `#3C3C3C` | 카드 · 표의 1px 테두리, 가로 구분선, 막대의 등급 C가 아닌 몫 (v2에서 바뀜) |
+| `color-text` | `#CCCCCC` | 본문 글자 · 제목 · KPI 숫자 (v2에서 바뀜) |
+| `color-text-muted` | `#9D9D9D` | 보조 글자(설명 · 단위 · 표 머리 · 바닥글) (v2에서 바뀜) |
+| `color-accent` | `#4DAAFC` | 강조 1색 — 슬라이더 손잡이와 값, 포커스 테두리, 링크 (v2에서 바뀜) |
 
 ### 등급 색 4개 (신호등 — 초록에서 빨강, 언제나 글자 라벨 S · A · B · C와 함께)
 
 | 이름 | 값 | 쓰는 곳 |
 |---|---|---|
-| `grade-s` | `#1E7B3C` | S 초록 — 등급 막대 조각 · 등급 라벨 바탕(흰 글자) |
-| `grade-a` | `#5F7209` | A 연두(올리브) — 같음 |
-| `grade-b` | `#B45309` | B 주황 — 같음 |
-| `grade-c` | `#B91C1C` | C 빨강 — 같음, 지역별 채권의 C등급 몫 |
+| `grade-s` | `#73C991` | S 초록 — 등급 막대 조각 · 등급 라벨 바탕(어두운 글자) (v2에서 바뀜) |
+| `grade-a` | `#B5C34A` | A 연두 — 같음 (v2에서 바뀜) |
+| `grade-b` | `#E2A33E` | B 주황 — 같음 (v2에서 바뀜) |
+| `grade-c` | `#F48771` | C 빨강 — 같음, 지역별 채권의 C등급 몫 (v2에서 바뀜) |
 
 색만으로 등급을 알리지 않는다 — 막대 조각 · 표 · 카드 어디서나 'S · A · B · C' 글자를 함께 쓴다.
 
@@ -127,27 +128,29 @@
 
 ## 5. 대비 표
 
-`scripts/board_contrast.py`로 계산했다(WCAG 2.x 명암비). 처음 고른 `grade-a` `#677A0E`는 페이지 바탕 위에서 4.49로 기준에 못 미쳐 `#5F7209`로 고쳐 다시 계산했다.
+`scripts/board_contrast.py`로 계산했다(WCAG 2.x 명암비). v2 색으로 다시 계산했다 — 본문 · 보조 글자 · KPI 숫자 · 등급 라벨 · 표 머리 · 슬라이더 라벨 · 바닥글. (v1에서는 `grade-a` `#677A0E`가 4.49로 모자라 `#5F7209`로 고쳤었다.)
 
 | 어디 | 글자 | 바탕 | 대비 | 4.5 : 1 이상 |
 |---|---|---|---:|---|
-| 본문 글자 · 페이지 바탕 | `color-text` #1F2328 | `color-bg` #F6F7F9 | 14.74 | 예 |
-| 본문 글자 · 카드 면 | `color-text` #1F2328 | `color-surface` #FFFFFF | 15.80 | 예 |
-| 보조 글자 · 페이지 바탕 | `color-text-muted` #5A626C | `color-bg` #F6F7F9 | 5.76 | 예 |
-| 보조 글자 · 카드 면 | `color-text-muted` #5A626C | `color-surface` #FFFFFF | 6.18 | 예 |
-| 강조 글자(링크 · 슬라이더 값) · 카드 면 | `color-accent` #1D4ED8 | `color-surface` #FFFFFF | 6.70 | 예 |
-| 강조 단추 위 흰 글자 | `color-surface` #FFFFFF | `color-accent` #1D4ED8 | 6.70 | 예 |
-| 등급 S 라벨: 흰 글자 · 등급 색 바탕 | `color-surface` #FFFFFF | `grade-s` #1E7B3C | 5.31 | 예 |
-| 등급 A 라벨: 흰 글자 · 등급 색 바탕 | `color-surface` #FFFFFF | `grade-a` #5F7209 | 5.39 | 예 |
-| 등급 B 라벨: 흰 글자 · 등급 색 바탕 | `color-surface` #FFFFFF | `grade-b` #B45309 | 5.02 | 예 |
-| 등급 C 라벨: 흰 글자 · 등급 색 바탕 | `color-surface` #FFFFFF | `grade-c` #B91C1C | 6.47 | 예 |
-| 등급 S 글자 · 카드 면 | `grade-s` #1E7B3C | `color-surface` #FFFFFF | 5.31 | 예 |
-| 등급 A 글자 · 카드 면 | `grade-a` #5F7209 | `color-surface` #FFFFFF | 5.39 | 예 |
-| 등급 B 글자 · 카드 면 | `grade-b` #B45309 | `color-surface` #FFFFFF | 5.02 | 예 |
-| 등급 C 글자 · 카드 면 | `grade-c` #B91C1C | `color-surface` #FFFFFF | 6.47 | 예 |
-| 등급 S 글자 · 페이지 바탕 | `grade-s` #1E7B3C | `color-bg` #F6F7F9 | 4.96 | 예 |
-| 등급 A 글자 · 페이지 바탕 | `grade-a` #5F7209 | `color-bg` #F6F7F9 | 5.03 | 예 |
-| 등급 B 글자 · 페이지 바탕 | `grade-b` #B45309 | `color-bg` #F6F7F9 | 4.68 | 예 |
-| 등급 C 글자 · 페이지 바탕 | `grade-c` #B91C1C | `color-bg` #F6F7F9 | 6.04 | 예 |
+| 본문 글자 · 페이지 바탕 | `color-text` #CCCCCC | `color-bg` #181818 | 11.06 | 예 |
+| 본문 글자 · 카드 면 | `color-text` #CCCCCC | `color-surface` #1F1F1F | 10.26 | 예 |
+| 보조 글자 · 페이지 바탕 | `color-text-muted` #9D9D9D | `color-bg` #181818 | 6.55 | 예 |
+| 보조 글자 · 카드 면 | `color-text-muted` #9D9D9D | `color-surface` #1F1F1F | 6.08 | 예 |
+| KPI 숫자 · 카드 면 | `color-text` #CCCCCC | `color-surface` #1F1F1F | 10.26 | 예 |
+| 표 머리 · 슬라이더 라벨(5% · 30%) · 카드 면 | `color-text-muted` #9D9D9D | `color-surface` #1F1F1F | 6.08 | 예 |
+| 바닥글 · 페이지 바탕 | `color-text-muted` #9D9D9D | `color-bg` #181818 | 6.55 | 예 |
+| 강조 글자(슬라이더 값) · 카드 면 | `color-accent` #4DAAFC | `color-surface` #1F1F1F | 6.65 | 예 |
+| 등급 S 라벨: 카드 면 색 글자 · 등급 색 바탕 | `color-surface` #1F1F1F | `grade-s` #73C991 | 8.24 | 예 |
+| 등급 A 라벨: 카드 면 색 글자 · 등급 색 바탕 | `color-surface` #1F1F1F | `grade-a` #B5C34A | 8.53 | 예 |
+| 등급 B 라벨: 카드 면 색 글자 · 등급 색 바탕 | `color-surface` #1F1F1F | `grade-b` #E2A33E | 7.49 | 예 |
+| 등급 C 라벨: 카드 면 색 글자 · 등급 색 바탕 | `color-surface` #1F1F1F | `grade-c` #F48771 | 6.71 | 예 |
+| 등급 S 글자 · 카드 면 | `grade-s` #73C991 | `color-surface` #1F1F1F | 8.24 | 예 |
+| 등급 A 글자 · 카드 면 | `grade-a` #B5C34A | `color-surface` #1F1F1F | 8.53 | 예 |
+| 등급 B 글자 · 카드 면 | `grade-b` #E2A33E | `color-surface` #1F1F1F | 7.49 | 예 |
+| 등급 C 글자 · 카드 면 | `grade-c` #F48771 | `color-surface` #1F1F1F | 6.71 | 예 |
+| 등급 S 글자 · 페이지 바탕 | `grade-s` #73C991 | `color-bg` #181818 | 8.87 | 예 |
+| 등급 A 글자 · 페이지 바탕 | `grade-a` #B5C34A | `color-bg` #181818 | 9.19 | 예 |
+| 등급 B 글자 · 페이지 바탕 | `grade-b` #E2A33E | `color-bg` #181818 | 8.07 | 예 |
+| 등급 C 글자 · 페이지 바탕 | `grade-c` #F48771 | `color-bg` #181818 | 7.23 | 예 |
 
-가장 낮은 값: **4.68** (등급 B 글자 · 페이지 바탕)
+가장 낮은 값: 6.08

@@ -9,16 +9,16 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8")
 
 TOKENS = {
-    "color-bg": "#F6F7F9",
-    "color-surface": "#FFFFFF",
-    "color-border": "#D5DAE0",
-    "color-text": "#1F2328",
-    "color-text-muted": "#5A626C",
-    "color-accent": "#1D4ED8",
-    "grade-s": "#1E7B3C",
-    "grade-a": "#5F7209",
-    "grade-b": "#B45309",
-    "grade-c": "#B91C1C",
+    "color-bg": "#181818",
+    "color-surface": "#1F1F1F",
+    "color-border": "#3C3C3C",
+    "color-text": "#CCCCCC",
+    "color-text-muted": "#9D9D9D",
+    "color-accent": "#4DAAFC",
+    "grade-s": "#73C991",
+    "grade-a": "#B5C34A",
+    "grade-b": "#E2A33E",
+    "grade-c": "#F48771",
 }
 
 # (글자, 바탕, 어디)
@@ -27,10 +27,12 @@ PAIRS = [
     ("color-text", "color-surface", "본문 글자 · 카드 면"),
     ("color-text-muted", "color-bg", "보조 글자 · 페이지 바탕"),
     ("color-text-muted", "color-surface", "보조 글자 · 카드 면"),
-    ("color-accent", "color-surface", "강조 글자(링크 · 슬라이더 값) · 카드 면"),
-    ("color-surface", "color-accent", "강조 단추 위 흰 글자"),
+    ("color-text", "color-surface", "KPI 숫자 · 카드 면"),
+    ("color-text-muted", "color-surface", "표 머리 · 슬라이더 라벨(5% · 30%) · 카드 면"),
+    ("color-text-muted", "color-bg", "바닥글 · 페이지 바탕"),
+    ("color-accent", "color-surface", "강조 글자(슬라이더 값) · 카드 면"),
 ] + [
-    (f"color-surface", f"grade-{g}", f"등급 {g.upper()} 라벨: 흰 글자 · 등급 색 바탕")
+    (f"color-surface", f"grade-{g}", f"등급 {g.upper()} 라벨: 카드 면 색 글자 · 등급 색 바탕")
     for g in "sabc"
 ] + [
     (f"grade-{g}", "color-surface", f"등급 {g.upper()} 글자 · 카드 면") for g in "sabc"

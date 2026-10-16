@@ -17,16 +17,16 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 # design.md 토큰 표 그대로 — 이 값만 쓴다
 TOKENS = {
-    "color-bg": "#F6F7F9",
-    "color-surface": "#FFFFFF",
-    "color-border": "#D5DAE0",
-    "color-text": "#1F2328",
-    "color-text-muted": "#5A626C",
-    "color-accent": "#1D4ED8",
-    "grade-s": "#1E7B3C",
-    "grade-a": "#5F7209",
-    "grade-b": "#B45309",
-    "grade-c": "#B91C1C",
+    "color-bg": "#181818",
+    "color-surface": "#1F1F1F",
+    "color-border": "#3C3C3C",
+    "color-text": "#CCCCCC",
+    "color-text-muted": "#9D9D9D",
+    "color-accent": "#4DAAFC",
+    "grade-s": "#73C991",
+    "grade-a": "#B5C34A",
+    "grade-b": "#E2A33E",
+    "grade-c": "#F48771",
     "font-family": "'Noto Sans KR', sans-serif",
     "fs-1": "14px",
     "fs-2": "16px",
@@ -124,7 +124,7 @@ buyers = [{
 } for r in df.itertuples()]
 data = {
     "base": BASE_LINE, "total_ar": total_ar, "buyers": buyers,
-    "top10": list(top10["buyer_id"]), "regions": [r for r, _ in region_rows],
+    "top10": list(top10["buyer_id"]), "regions": [r for r, _ in region_rows], "near_n": 3,
 }
 
 
@@ -150,9 +150,36 @@ kpis = "".join([
 seg = "".join(
     f'<span class="seg g-{g}" id="seg-{g}" style="width:{base["cnt"][g] / len(df) * 100:.4f}%" '
     f'title="{g} {base["cnt"][g]}곳"></span>' for g in GRADES)
+seg_ar = "".join(
+    f'<span class="seg g-{g}" id="seg-ar-{g}" style="width:{base["ar"][g] / total_ar * 100:.4f}%" '
+    f'title="{g} {usd(base["ar"][g])}"></span>' for g in GRADES)
 legend = "".join(
-    f'<li class="legend-row">{badge(g)}<span class="legend-n num" id="lg-n-{g}">{base["cnt"][g]}곳</span>'
-    f'<span class="legend-ar num" id="lg-ar-{g}">{usd(base["ar"][g])}</span></li>' for g in GRADES)
+    f'<li class="legend-row">{badge(g)}'
+    f'<span class="legend-n num"><span id="lg-n-{g}">{base["cnt"][g]}곳</span> '
+    f'<span class="legend-pct" id="lg-np-{g}">{pct1(base["cnt"][g] / len(df) * 100)}</span></span>'
+    f'<span class="legend-ar num"><span id="lg-ar-{g}">{usd(base["ar"][g])}</span> '
+    f'<span id="lg-arp-{g}">{pct1(base["ar"][g] / total_ar * 100)}</span></span></li>' for g in GRADES)
+
+
+NEAR_N = 3  # C등급 바로 아래 몇 곳을 보일지
+
+
+def near_rows(line_pct):
+    """지금 선에서 C가 아닌 곳 중 위험 점수가 높은 순 NEAR_N곳."""
+    rest = df[[grade_of(p, line_pct) != "C" for p in df["pd_30d"]]]
+    out = []
+    for r in rest.sort_values("pd_30d", ascending=False).head(NEAR_N).itertuples():
+        g = grade_of(r.pd_30d, line_pct)
+        out.append(f'<li>{badge(g)}<span class="near-name">{esc(r.buyer_name)}</span>'
+                   f'<span class="num">{pct1(r.pd_30d * 100)}</span><span class="num">{usd(r.open_ar_usd)}</span></li>')
+    return "".join(out)
+
+
+def insight(cnt_c, ar_c):
+    if cnt_c == 0:
+        return "지금 선에서는 C등급 바이어가 없습니다."
+    return (f"C등급은 바이어 수로는 {pct1(cnt_c / len(df) * 100)}({cnt_c}곳)이지만 "
+            f"채권으로는 {pct1(ar_c / total_ar * 100)}({usd(ar_c)})입니다.")
 
 rows, cards = [], []
 for r in top10.itertuples():
@@ -170,6 +197,20 @@ for r in top10.itertuples():
         f'<p class="bcard-line"><span class="muted">채권</span><span class="num">{usd(r.open_ar_usd)}</span></p>'
         f'<p class="bcard-line"><span class="muted">연체</span><span class="num">{usd(r.overdue_usd)}</span></p>'
         f'<p class="bcard-sig">{sig}</p></li>')
+
+def pct_g(x):
+    """기준값 표시: 17 → 17%, 8.5 → 8.5%, 4.25 → 4.25%."""
+    return f"{round(x, 2):g}%"
+
+
+def cut_rows(line_pct):
+    t = [line_pct, line_pct / 2, line_pct / 4]
+    return [("C", f"{pct_g(t[0])} 이상"), ("B", f"{pct_g(t[1])} 이상"),
+            ("A", f"{pct_g(t[2])} 이상"), ("S", f"{pct_g(t[2])} 미만")]
+
+
+cuts = "".join(f'<li>{badge(g)}<span class="num" id="cut-{g}">{esc(txt)}</span></li>'
+               for g, txt in cut_rows(BASE_LINE))
 
 max_region = region_rows[0][1]
 reg = "".join(
@@ -215,7 +256,18 @@ section {{ margin-top: var(--space-6); }}
 .kpi-num.fs-down-3 {{ font-size: var(--fs-3); }}
 .kpi-sub {{ margin-top: var(--space-1); font-size: var(--fs-1); color: var(--color-text-muted); white-space: nowrap; }}
 .row2 {{ display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--space-5); }}
-.gbar {{ display: flex; height: var(--space-6); border-radius: var(--radius-1); overflow: hidden; gap: 0; }}
+.gbars {{ display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-3) var(--space-3); align-items: center; }}
+.gb-label {{ font-size: var(--fs-1); color: var(--color-text-muted); }}
+.gbar {{ display: flex; height: var(--space-5); border-radius: var(--radius-1); overflow: hidden; gap: 0; }}
+.near {{ margin-top: var(--space-4); }}
+.near .mini-title .muted {{ display: block; font-weight: 400; }}
+.near-list li {{ display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: var(--space-3); align-items: center;
+  padding: var(--space-2) 0; border-bottom: 1px solid var(--color-border); color: var(--color-text); font-size: var(--fs-1); }}
+.near-list li:last-child {{ border-bottom: 0; }}
+.near-name {{ min-width: 0; }}
+.legend-pct {{ font-size: var(--fs-1); font-weight: 400; color: var(--color-text-muted); }}
+.g-insight {{ margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--color-border);
+  font-size: var(--fs-2); color: var(--color-text); }}
 .seg {{ display: block; height: 100%; }}
 .g-S {{ background: var(--grade-s); }} .g-A {{ background: var(--grade-a); }}
 .g-B {{ background: var(--grade-b); }} .g-C {{ background: var(--grade-c); }}
@@ -230,7 +282,18 @@ section {{ margin-top: var(--space-6); }}
 .slider:focus-visible {{ outline: 2px solid var(--color-accent); outline-offset: var(--space-1); }}
 .ends {{ display: flex; justify-content: space-between; font-size: var(--fs-1); color: var(--color-text-muted); }}
 .rule {{ margin-top: var(--space-3); font-size: var(--fs-1); color: var(--color-text-muted); }}
-.delta {{ margin-top: var(--space-3); font-size: var(--fs-3); font-weight: 700; color: var(--color-text); }}
+.mini {{ margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--color-border); }}
+.mini-title {{ font-size: var(--fs-1); font-weight: 700; color: var(--color-text); margin-bottom: var(--space-2); }}
+.cmp {{ display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-2) var(--space-3); margin: 0; align-items: baseline; }}
+.cmp dt {{ font-size: var(--fs-1); color: var(--color-text-muted); }}
+.cmp dd {{ margin: 0; color: var(--color-text); font-weight: 700; }}
+.cmp-d {{ font-size: var(--fs-1); }}
+.cmp .d-up {{ color: var(--grade-c); }} .cmp .d-down {{ color: var(--grade-s); }}
+.cmp .d-0 {{ color: var(--color-text-muted); font-weight: 400; }}
+.cut {{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, auto);
+  grid-auto-flow: column; gap: var(--space-2) var(--space-4); }}
+.cut li {{ display: flex; align-items: center; gap: var(--space-2); color: var(--color-text); font-size: var(--fs-1); }}
+.cut .num {{ text-align: left; }}
 table {{ width: 100%; border-collapse: collapse; }}
 th {{ font-size: var(--fs-1); font-weight: 700; color: var(--color-text-muted); text-align: left;
   padding: 0 var(--space-3) var(--space-3); border-bottom: 1px solid var(--color-border); white-space: nowrap; }}
@@ -292,10 +355,16 @@ function stateOf(line) {
   return {cnt, ar, regC, g};
 }
 const BASE = stateOf(DATA.base);
+const BY_PD = DATA.buyers.slice().sort((a, b) => b.pd - a.pd || (a.id < b.id ? -1 : 1));
 const regTotal = {};
 for (const b of DATA.buyers) regTotal[b.region] = (regTotal[b.region] || 0) + (b.ar || 0);
 const set = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
 function signed(n, fmt) { return (n < 0 ? '−' : '+') + fmt(Math.abs(n)); }
+function diff(id, n, fmt) {  // 처음 선과의 차이: 늘면 C 색, 줄면 S 색, 같으면 '변화 없음'
+  const el = document.getElementById(id);
+  el.textContent = n === 0 ? '변화 없음' : signed(n, fmt);
+  el.className = 'num cmp-d ' + (n > 0 ? 'd-up' : n < 0 ? 'd-down' : 'd-0');
+}
 function fit() {  // 숫자가 칸보다 넓으면 글자를 한 단계씩 줄인다
   document.querySelectorAll('.fit').forEach(el => {
     el.classList.remove('fs-down-1', 'fs-down-2', 'fs-down-3');
@@ -312,12 +381,24 @@ function render(line) {
   set('k-c-n-sub', '위험 선 ' + line + '% 이상');
   set('k-c-ar', usd(s.ar.C));
   set('k-c-ar-sub', '전체 채권의 ' + (s.ar.C / DATA.total_ar * 100).toFixed(1) + '%');
+  const esc = t => String(t).replace(/[&<>"']/g, ch => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;'}[ch]));
+  document.getElementById('near').innerHTML = BY_PD.filter(b => s.g[b.id] !== 'C').slice(0, DATA.near_n).map(b =>
+    '<li><span class="badge g-' + s.g[b.id] + '">' + s.g[b.id] + '</span><span class="near-name">' + esc(b.name) + '</span>'
+    + '<span class="num">' + (b.pd * 100).toFixed(1) + '%</span><span class="num">' + usd(b.ar) + '</span></li>').join('');
+  set('g-insight', s.cnt.C === 0 ? '지금 선에서는 C등급 바이어가 없습니다.'
+    : 'C등급은 바이어 수로는 ' + (s.cnt.C / DATA.buyers.length * 100).toFixed(1) + '%(' + s.cnt.C + '곳)이지만 '
+      + '채권으로는 ' + (s.ar.C / DATA.total_ar * 100).toFixed(1) + '%(' + usd(s.ar.C) + ')입니다.');
   for (const k of G) {
     const seg = document.getElementById('seg-' + k);
     seg.style.width = (s.cnt[k] / DATA.buyers.length * 100).toFixed(4) + '%';
     seg.title = k + ' ' + s.cnt[k] + '곳';
+    const segAr = document.getElementById('seg-ar-' + k);
+    segAr.style.width = (s.ar[k] / DATA.total_ar * 100).toFixed(4) + '%';
+    segAr.title = k + ' ' + usd(s.ar[k]);
     set('lg-n-' + k, s.cnt[k] + '곳');
+    set('lg-np-' + k, (s.cnt[k] / DATA.buyers.length * 100).toFixed(1) + '%');
     set('lg-ar-' + k, usd(s.ar[k]));
+    set('lg-arp-' + k, (s.ar[k] / DATA.total_ar * 100).toFixed(1) + '%');
   }
   document.querySelectorAll('[data-gcell]').forEach(el => {
     const k = s.g[el.dataset.gcell];
@@ -329,7 +410,13 @@ function render(line) {
     set('rc-amt-' + i, usd(c));
   });
   const dn = s.cnt.C - BASE.cnt.C, da = s.ar.C - BASE.ar.C;
-  set('delta', '처음 ' + DATA.base + '%보다 C등급 ' + signed(dn, n => n + '곳') + ' · ' + signed(da, usd));
+  set('cmp-n', s.cnt.C + '곳');
+  set('cmp-ar', usd(s.ar.C));
+  diff('cmp-dn', dn, n => n + '곳');
+  diff('cmp-dar', da, usd);
+  const pg = x => Number(x.toFixed(2)) + '%';
+  set('cut-C', pg(line) + ' 이상'); set('cut-B', pg(line / 2) + ' 이상');
+  set('cut-A', pg(line / 4) + ' 이상'); set('cut-S', pg(line / 4) + ' 미만');
   fit();
 }
 const slider = document.getElementById('line');
@@ -363,9 +450,16 @@ page = f"""<!doctype html>
   <section class="row2">
     <article class="card">
       <div class="sec-head"><h2>신호등 등급 분포</h2><span class="sec-note" id="line-note">위험 선 {BASE_LINE}% 기준</span></div>
-      <div class="gbar" role="img" aria-label="등급별 곳 수 막대">{seg}</div>
+      <div class="gbars">
+        <span class="gb-label">곳 수</span><div class="gbar" role="img" aria-label="등급별 곳 수 비중 막대">{seg}</div>
+        <span class="gb-label">채권</span><div class="gbar" role="img" aria-label="등급별 채권 금액 비중 막대">{seg_ar}</div>
+      </div>
       <ul class="legend">{legend}</ul>
-      <p class="rule">막대 길이는 곳 수, 아래 금액은 등급별 채권 합입니다.</p>
+      <p class="g-insight" id="g-insight">{esc(insight(c_cnt, c_ar))}</p>
+      <div class="near">
+        <p class="mini-title">C등급 바로 아래 {NEAR_N}곳 <span class="muted">선을 낮추면 먼저 C로 들어오는 곳</span></p>
+        <ul class="near-list" id="near">{near_rows(BASE_LINE)}</ul>
+      </div>
     </article>
     <article class="card">
       <div class="sec-head"><h2>위험 선</h2><span class="sec-note">회의에서 직접 움직여 보세요</span></div>
@@ -373,8 +467,17 @@ page = f"""<!doctype html>
       <input class="slider" id="line" type="range" min="{LINE_MIN}" max="{LINE_MAX}" step="1" value="{BASE_LINE}"
         aria-label="위험 선(%)">
       <div class="ends"><span>{LINE_MIN}%</span><span>{LINE_MAX}%</span></div>
-      <p class="delta" id="delta">처음 {BASE_LINE}%보다 C등급 +0곳 · +$0</p>
-      <p class="rule">위험 점수가 선 이상이면 C, 선의 절반 이상이면 B, 4분의 1 이상이면 A, 나머지는 S입니다.</p>
+      <div class="mini">
+        <p class="mini-title">처음 {BASE_LINE}%와 비교</p>
+        <dl class="cmp">
+          <dt>C등급</dt><dd class="num" id="cmp-n">{c_cnt}곳</dd><dd class="num cmp-d d-0" id="cmp-dn">변화 없음</dd>
+          <dt>C등급 채권</dt><dd class="num" id="cmp-ar">{usd(c_ar)}</dd><dd class="num cmp-d d-0" id="cmp-dar">변화 없음</dd>
+        </dl>
+      </div>
+      <div class="mini">
+        <p class="mini-title">등급 나누는 법 <span class="muted">· 위험 점수 기준</span></p>
+        <ul class="cut">{cuts}</ul>
+      </div>
     </article>
   </section>
 
